@@ -5,4 +5,4 @@ feature/prj-145-lvm)
 - This is my Ansible-config repo
 - This is to test
  Let's now Test our set up by making some change in README.MD 
-.
+
