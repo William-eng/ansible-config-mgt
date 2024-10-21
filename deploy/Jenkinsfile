@@ -3,7 +3,8 @@ pipeline {
     
     parameters {
     string(name: 'inventory', defaultValue: 'dev', description: 'This is the inventory file for the environment to deploy configuration')
-      }
+    string(name: 'ansible_tags', defaultValue: 'webserver', description: 'Tags for the Ansible playbook')    
+    }
 
     environment {
         ANSIBLE_CONFIG = "${WORKSPACE}/deploy/ansible.cfg"
