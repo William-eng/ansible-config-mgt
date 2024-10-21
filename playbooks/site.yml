@@ -5,11 +5,16 @@
   tasks: 
     - include_vars: ../dynamic-assignments/env-vars.yml
       tags: 
-         - always
+        - always
 
-
+# Import database servers playbook
 - import_playbook: ../static-assignments/db-servers.yml
+
+# Import UAT web servers playbook
 - import_playbook: ../static-assignments/uat-webservers.yml
+
+# Import load balancers playbook only if the load balancer is required
 - import_playbook: ../static-assignments/loadbalancers.yml
-  when: load_balancer_is_required
+  when: load_balancer_is_required | default(false)
+
 
