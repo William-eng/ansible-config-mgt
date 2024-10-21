@@ -1,20 +1,35 @@
 ---
-- name: include dynamic variables
+- name: Include dynamic variables
   hosts: all
   become: yes
-  tasks: 
+  tasks:
     - include_vars: ../dynamic-assignments/env-vars.yml
-      tags: 
+      tags:
         - always
 
-# Import database servers playbook
-- import_playbook: ../static-assignments/db-servers.yml
+# - import_playbook: ../static-assignments/db-servers.yml
+#   tags:
+#     - db
 
-# Import UAT web servers playbook
-- import_playbook: ../static-assignments/uat-webservers.yml
+# - import_playbook: ../static-assignments/uat-webservers.yml
+#   tags:
+#     - webserver
 
-# Import load balancers playbook only if the load balancer is required
-- import_playbook: ../static-assignments/loadbalancers.yml
-  when: load_balancer_is_required | default(false)
+# - import_playbook: ../static-assignments/loadbalancers.yml
+#   when: load_balancer_is_required
+#   tags:
+#     - loadbalancer
 
+# - import_playbook: ../static-assignments/artifactory.yml
+#   tags:
+#     - artifactory
 
+# - import_playbook: ../static-assignments/deployment.yml
+#   tags:
+#    - deployment
+
+# - import_playbook: ../static-assignments/sonarqube.yml
+
+- import_playbook: ../static-assignments/artifactory.yml
+  tags:
+    - artifactory
