@@ -37,10 +37,11 @@ pipeline {
             steps {
                 script {
                     def hosts = [
-                        [group: 'tooling', ip: '172.31.24.134', user: 'ec2-user'],
-                        [group: 'tooling', ip: '172.31.29.63', user: 'ec2-user'],
-                        [group: 'nginx', ip: '172.31.21.241', user: 'ubuntu'],
-                        [group: 'db', ip: '172.31.18.140', user: 'ec2-user']
+                        //[group: 'tooling', ip: '172.31.24.134', user: 'ec2-user'],
+                        //[group: 'tooling', ip: '172.31.29.63', user: 'ec2-user'],
+                        //[group: 'nginx', ip: '172.31.21.241', user: 'ubuntu'],
+                        //[group: 'db', ip: '172.31.18.140', user: 'ec2-user'],
+			[group: 'artifactory', ip: '172.31.28.231', user: 'ubuntu']
                     ]
                     for (host in hosts) {
                         sshagent(['private-key']) {
