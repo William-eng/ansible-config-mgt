@@ -39,7 +39,7 @@ pipeline {
                     ]
                     for (host in hosts) {
                         sshagent(['private-key']) {
-                            sh "ssh -o StrictHostKeyChecking=no -i /home/ubuntu/.ssh/keypair.pem ${host.user}@${host.ip} exit"
+                            sh "ssh -o StrictHostKeyChecking=no -i /home/${host.user}/.ssh/authorized_keys ${host.user}@${host.ip} exit"
                         }
                     }
                 }
