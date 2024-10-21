@@ -11,6 +11,9 @@ mysql_root_username: webaccess
 mysql_root_password: mypass
 
 
+enable_nginx_lb: false
+enable_apache_lb: false
+load_balancer_is_required: false
 # IP address of the server that will connect to MySQL (replace with the actual server IP)
 mysql_user_host: "172.31.18.140"
 
