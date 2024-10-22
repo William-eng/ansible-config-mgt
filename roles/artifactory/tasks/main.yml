@@ -1,64 +1,63 @@
 ---
-- name: Install required packages
-  apt:
-    name:
-      - openjdk-11-jdk
-      - wget
-    state: present
+# tasks file for installing Java and Artifactory on Ubuntu
+
+- name: Install Java 11
+  hosts: artifactory
   become: yes
+  tasks:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: yes
 
-- name: Download Artifactory
-  get_url:
-    url: "https://releases.jfrog.io/artifactory/artifactory-pro/{{ artifactory_version }}/artifactory-pro-{{ artifactory_version }}-linux.tar.gz"
-    dest: /tmp/artifactory.tar.gz
+    - name: Install Java 11
+      ansible.builtin.apt:
+        name: openjdk-11-jdk
+        state: present
+
+    - name: Configuring Java path
+      ansible.builtin.shell: |
+        echo "JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64" >> /etc/profile
+        echo "PATH=$PATH:$JAVA_HOME/bin" >> /etc/profile
+      args:
+        executable: /bin/bash
+
+    - name: Reload profile to apply Java environment variables
+      ansible.builtin.shell: source /etc/profile
+      args:
+        executable: /bin/bash
+
+- name: Install JFrog Artifactory OSS
+  hosts: artifactory
   become: yes
+  tasks:
+    - name: Add JFrog GPG key
+      ansible.builtin.shell: |
+        curl -fsSL https://releases.jfrog.io/artifactory/api/gpg/key/public | gpg --dearmor -o /usr/share/keyrings/jfrog-public.gpg
 
-- name: Create Artifactory directory
-  file:
-    path: /opt/jfrog/artifactory
-    state: directory
-    owner: artifactory
-    group: artifactory
-    mode: '0755'
-  become: yes
+    - name: Add JFrog repository
+      ansible.builtin.shell: |
+        echo "deb [signed-by=/usr/share/keyrings/jfrog-public.gpg] https://releases.jfrog.io/artifactory/artifactory-debs xenial main" | tee /etc/apt/sources.list.d/artifactory.list
 
-- name: Extract Artifactory
-  unarchive:
-    src: /tmp/artifactory.tar.gz
-    dest: /opt/jfrog/artifactory
-    remote_src: yes
-  become: yes
+    - name: Update apt cache after adding JFrog repository
+      ansible.builtin.apt:
+        update_cache: yes
 
-- name: Create Artifactory user
-  user:
-    name: artifactory
-    system: yes
-    create_home: yes
-  become: yes
+    - name: Install JFrog Artifactory OSS
+      ansible.builtin.apt:
+        name: jfrog-artifactory-oss
+        state: present
 
-- name: Create Artifactory service file
-  copy:
-    dest: /etc/systemd/system/artifactory.service
-    content: |
-      [Unit]
-      Description=JFrog Artifactory
-      After=network.target
+    - name: Start and enable Artifactory service
+      ansible.builtin.systemd:
+        name: artifactory
+        state: started
+        enabled: yes
 
-      [Service]
-      Type=simple
-      User=artifactory
-      ExecStart=/opt/jfrog/artifactory/artifactory-pro-{{ artifactory_version }}/bin/artifactory.sh start
-      ExecStop=/opt/jfrog/artifactory/artifactory-pro-{{ artifactory_version }}/bin/artifactory.sh stop
-      Restart=always
+    - name: Check status of Artifactory service
+      ansible.builtin.command:
+        cmd: systemctl status artifactory.service
+      register: result
 
-      [Install]
-      WantedBy=multi-user.target
-  become: yes
-
-- name: Start and enable Artifactory service
-  systemd:
-    name: artifactory
-    state: started
-    enabled: yes
-  become: yes
-
+    - name: Print the status of Artifactory service
+      ansible.builtin.debug:
+        msg: "{{ result.stdout }}"
