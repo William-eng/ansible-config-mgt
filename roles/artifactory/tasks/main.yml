@@ -49,12 +49,12 @@
   ansible.builtin.debug:
     msg: "{{ result.stdout }}"
 
- - name: Tail the Artifactory log 
-   ansible.builtin.shell: tail -f /var/opt/jfrog/artifactory/log/artifactory-service.log
-   become: yes
-   async: 30
-   poll: 0
-   register: tail_result
+ #- name: Tail the Artifactory log 
+  # ansible.builtin.shell: tail -f /var/opt/jfrog/artifactory/log/artifactory-service.log
+  # become: yes
+  # async: 30
+  # poll: 0
+  # register: tail_result
 
  - name: Wait for tail to complete (optional)
    ansible.builtin.async_status:
