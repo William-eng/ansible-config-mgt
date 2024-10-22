@@ -56,10 +56,10 @@
   # poll: 0
   # register: tail_result
 
- - name: Wait for tail to complete (optional)
-   ansible.builtin.async_status:
-     jid: "{{ tail_result.ansible_job_id }}"
-   register: job_result
-   until: job_result.finished
-   retries: 30
-   delay: 1
+ #- name: Wait for tail to complete (optional)
+  # ansible.builtin.async_status:
+   #  jid: "{{ tail_result.ansible_job_id }}"
+   #register: job_result
+   #until: job_result.finished
+   #retries: 30
+   #delay: 1
