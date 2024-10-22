@@ -1,0 +1,10 @@
+# roles/mysql/vars/main.yml
+
+mysql_databases:
+  - name: homestead
+
+mysql_users:
+  - name: homestead
+    host: "%"
+    password: "sePret^i"
+    priv: "homestead.*:ALL"
