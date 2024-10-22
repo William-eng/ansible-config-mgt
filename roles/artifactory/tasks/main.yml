@@ -1,10 +1,8 @@
 ---
-# tasks file for Artifactory
+# tasks file for artifactory on Ubuntu
 
-- name: Install Java 11
+- name: Update apt cache
   ansible.builtin.apt:
-    name: openjdk-11-jdk
-    state: present
     update_cache: yes
   become: yes
 
@@ -50,3 +48,18 @@
 - name: Print the status of Artifactory service
   ansible.builtin.debug:
     msg: "{{ result.stdout }}"
+
+ - name: Tail the Artifactory log 
+   ansible.builtin.shell: tail -f /var/opt/jfrog/artifactory/log/artifactory-service.log
+   become: yes
+   async: 30
+   poll: 0
+   register: tail_result
+
+ - name: Wait for tail to complete (optional)
+   ansible.builtin.async_status:
+     jid: "{{ tail_result.ansible_job_id }}"
+   register: job_result
+   until: job_result.finished
+   retries: 30
+   delay: 1
