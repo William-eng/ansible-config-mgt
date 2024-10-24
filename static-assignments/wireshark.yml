@@ -1,5 +1,5 @@
 ---
 - hosts: wireshark
   roles:
-     - install_wireshark
+     - wireshark
   become: true
