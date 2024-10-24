@@ -1,5 +1,5 @@
 ---
 - hosts: wireshark
+  become: true
   roles:
     - install_wireshark
-  become: true
